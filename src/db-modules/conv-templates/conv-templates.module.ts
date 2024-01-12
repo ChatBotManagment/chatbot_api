@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   ConvTemplate,
   convTemplatesSchema,
-} from '../entities/convTemplate.schema';
+} from '../schemas/convTemplate.schema';
 
 @Module({
   imports: [

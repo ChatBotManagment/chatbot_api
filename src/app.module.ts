@@ -5,9 +5,9 @@ import { OpenAIService } from './openai/openai.service';
 import { ChatController } from './chat/chat.controller';
 import { AuthzModule } from './authz/authz.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PeopleModule } from './people/people.module';
-import { ConversationModule } from './conversation/conversation.module';
-import { ConvTemplatesModule } from './conv-templates/conv-templates.module';
+import { ConversationModule } from './db-modules/conversation/conversation.module';
+import { PeopleModule } from './db-modules/people/people.module';
+import { ConvTemplatesModule } from './db-modules/conv-templates/conv-templates.module';
 
 @Module({
   imports: [
