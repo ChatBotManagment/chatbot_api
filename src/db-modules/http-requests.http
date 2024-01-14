@@ -1,6 +1,6 @@
 
 ### POST room
-POST http://localhost:3000/api/v1/room
+POST {{baase_url}}/api/v1/room
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
@@ -22,7 +22,7 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### GET room
-GET http://localhost:3000/api/v1/room
+GET {{baase_url}}/api/v1/room
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
@@ -30,7 +30,7 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### POST people
-POST http://localhost:3000/api/v1/people
+POST {{baase_url}}/api/v1/people
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
@@ -49,13 +49,13 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### GET people
-GET http://localhost:3000/api/v1/people
+GET {{baase_url}}/api/v1/people
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
 
 ### Update people
-PATCH http://localhost:3000/api/v1/people/65a3358d9c2d1683df1290ec
+PATCH {{baase_url}}/api/v1/people/65a3358d9c2d1683df1290ec
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
@@ -74,7 +74,7 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### POST conv. Template
-POST http://localhost:3000/api/v1/room-template
+POST {{baase_url}}/api/v1/room-template
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
@@ -97,7 +97,7 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### GET conv. Template
-GET http://localhost:3000/api/v1/room-template
+GET {{baase_url}}/api/v1/room-template
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
@@ -105,7 +105,7 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### POST Chat
-POST http://localhost:3000/api/v1/chat/65a33b1cf30544aeb150f209
+POST {{baase_url}}/api/v1/chat/65a33b1cf30544aeb150f209
 Content-Type: application/json
 Client-Id: {{client_id}}
 Authorization: Bearer {{bearer_token}}
