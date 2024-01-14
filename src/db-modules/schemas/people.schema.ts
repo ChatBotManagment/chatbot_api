@@ -32,7 +32,7 @@ export class People {
   createdBy: string;
 }
 
-export const PeopleSchema = SchemaFactory.createForClass(People).set('"timestamps" true);
+export const PeopleSchema = SchemaFactory.createForClass(People).set('timestamps', true);
 
 export const PeopleModel = (connection: Connection) => {
   return model<People>(
@@ -40,5 +40,7 @@ export const PeopleModel = (connection: Connection) => {
     PeopleSchema,
     tableName || `${People.name.toLowerCase()}s`,
     {
-      connection: connection,    },  );
+      connection: connection,
+    },
+  );
 };

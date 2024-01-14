@@ -35,7 +35,7 @@ dotenv.config();
     PeopleModule,
     ChatModule,
     ChatEngineModule,
-    OpenAiModue,
+    OpenAiModule,
   ],
   controllers: [AppController, ChatController],
   providers: [AppService, OpenAIService],

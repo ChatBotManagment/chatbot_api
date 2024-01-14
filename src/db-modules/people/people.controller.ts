@@ -12,16 +12,16 @@ import {
 import { PeopleService } from './people.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
-import { AuthGuard } from"@nestjs/passport"';
+import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard("jwt"))
-@Controller("api/v1/people")
+@UseGuards(AuthGuard('jwt'))
+@Controller('api/v1/people')
 export class PeopleController {
   constructor(private readonly peopleService: PeopleService) {}
 
   @Post()
   create(@Body() createPersonDto: CreatePersonDto, @Req() req: Request) {
-    console.log("req.user", (req as any).user);
+    console.log('req.user', (req as any).user);
     return this.peopleService.create(createPersonDto, (req as any).user);
   }
 
