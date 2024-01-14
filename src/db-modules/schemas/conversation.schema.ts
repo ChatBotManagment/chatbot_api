@@ -1,27 +1,34 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 
 export type ConversationDocument = HydratedDocument<Conversation>;
 
+export const tableName = 'rooms';
+
 @Schema()
 export class Conversation {
+  @Prop({ type: Types.ObjectId, auto: true })
+  _id: Types.ObjectId;
+
+  @Prop({ type: String })
+  message: any;
+
+  @Prop({ type: String })
+  name: string;
+
+  @Prop({ type: String })
+  role: string;
+
   @Prop({ type: Object })
-  configuration: any;
+  metaData: any;
 
-  @Prop()
-  title: string;
+  @Prop({ type: String })
+  read_by: any;
 
-  @Prop()
+  @Prop({ type: String })
   createdBy: string;
-
-  @Prop()
-  createdAt: Date;
-
-  @Prop({ type: [Object] })
-  conversation: any[];
-
-  @Prop({ type: [Object] })
-  parties: any[];
 }
 
-export const ConversationSchema = SchemaFactory.createForClass(Conversation);
+export const ConversationSchema = SchemaFactory.createForClass(Conversation)
+  .set('timestamps', true)
+  .set('_id', true);

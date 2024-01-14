@@ -1,0 +1,46 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
+import { RoomTemplateService } from './room-template.service';
+import { CreateConvTemplateDto } from './dto/create-room-template.dto';
+import { UpdateConvTemplateDto } from './dto/update-room-template.dto';
+import { AuthGuard } from '@nestjs/passport';
+
+@UseGuards(AuthGuard('jwt'))
+@Controller('api/v1/room-template')
+export class RoomTemplateController {
+  constructor(private readonly roomTemplatesService: RoomTemplateService) {}
+
+  @Post()
+  create(@Body() createConvTemplateDto: CreateConvTemplateDto, @Req() req: Request) {
+    return this.roomTemplatesService.create(createConvTemplateDto, (req as any).user);
+  }
+
+  @Get()
+  findAll() {
+    return this.roomTemplatesService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.roomTemplatesService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateConvTemplateDto: UpdateConvTemplateDto) {
+    return this.roomTemplatesService.update(+id, updateConvTemplateDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.roomTemplatesService.remove(+id);
+  }
+}

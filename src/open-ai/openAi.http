@@ -1,0 +1,10 @@
+
+### get response
+POST http://localhost:3000/chat
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+{
+  "message": "tell me a joke"
+}

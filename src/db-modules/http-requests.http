@@ -1,0 +1,120 @@
+
+### POST room
+POST http://localhost:3000/api/v1/room
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+{
+  "configuration": {
+    "asdasd": "asdas"
+  },
+  "title": "{{$random.alphabetic(10)}}",
+  "createdBy": 1,
+  "createdAt": "{{$isoTimestamp}}",
+  "conversation": [],
+  "parties": [
+    1,
+    2
+  ]
+}
+
+
+
+### GET room
+GET http://localhost:3000/api/v1/room
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+
+
+### POST people
+POST http://localhost:3000/api/v1/people
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+{
+  "name": "anas_11_",
+  "type": "user" ,
+  "gender": "male",
+  "age": "16",
+  "profilePic": "",
+  "description": "",
+  "metaData": {
+    "anydata": "asd"
+  }
+}
+
+
+### GET people
+GET http://localhost:3000/api/v1/people
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+### Update people
+PATCH http://localhost:3000/api/v1/people/65a3358d9c2d1683df1290ec
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+{
+  "name_sdfg": "hazem  we1111",
+  "gender": "male",
+  "age": "16",
+  "profilePic": "",
+  "description": "",
+  "metaData": {
+    "anydata": "asd"
+  }
+}
+
+
+
+### POST conv. Template
+POST http://localhost:3000/api/v1/room-template
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+{
+  "name": "مدرس الرياضيات",
+  "description": "asd",
+  "group": "الصف الأول",
+  "groupSlug": "v1",
+  "Prompt": "string",
+  "defaultParties": [
+    1,
+    2
+  ],
+  "memory": "string",
+  "metaData": {
+    "any": "asd"
+  }
+}
+
+
+### GET conv. Template
+GET http://localhost:3000/api/v1/room-template
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+
+
+### POST Chat
+POST http://localhost:3000/api/v1/chat/65a33b1cf30544aeb150f209
+Content-Type: application/json
+Client-Id: {{client_id}}
+Authorization: Bearer {{bearer_token}}
+
+{
+  "message": "hello again bot ",
+  "name": "hazem",
+  "role": "user",
+  "metaData": {
+    "anything": "asd"
+  }
+}

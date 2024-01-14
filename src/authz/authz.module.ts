@@ -3,7 +3,7 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 
 @Module({
-  imports: [PassportModule.register({ defaultStrategy: 'local' })],
+  imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
   providers: [JwtStrategy],
   exports: [PassportModule],
 })

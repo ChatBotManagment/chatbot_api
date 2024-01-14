@@ -1,0 +1,22 @@
+### add Client
+POST http://localhost:3000/client-info
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+{
+  "name": "demo {{$random.alphanumeric(5)}}",
+  "secret": "{{$random.alphanumeric(20)}}",
+  "database": "chatbot_{{$random.alphabetic(5)}}",
+  "url:": "localhost:2020",
+  "openai_api_key": "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",
+  "openai_organization": "org-jRGWrSsagksEJhRFtybrnDXE",
+  "metadata": {
+    "demo": true
+  }
+}
+
+
+### get Client
+GET http://localhost:3000/client-info
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
-import { OpenAIService } from '../openai/openai.service';
 import { AuthGuard } from '@nestjs/passport';
+import { OpenAIService } from '../open-ai/open-ai.service';
 
 @Controller('chat')
 export class ChatController {
@@ -9,7 +9,7 @@ export class ChatController {
   // @UseGuards(AuthGuard('jwt'))
   @Post()
   async sendMessage(@Body('message') userMessage: string) {
-    const response = await this.openAIService.getReply(userMessage);
+    const response = await this.openAIService.chatCompletions(userMessage);
     return response;
   }
 
