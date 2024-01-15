@@ -15,6 +15,7 @@ import { ChatModule } from './db-modules/chat/chat.module';
 import { ChatEngineModule } from './chat-engine/chat-engine.module';
 import { OpenAiModule } from './open-ai/open-ai.module';
 import { OpenAIService } from './open-ai/open-ai.service';
+import { MySlackModule } from './my-slack/my-slack.module';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ dotenv.config();
     MongooseModule.forRoot(process.env.MONGO_URI, {
       connectionName: 'dbConnection',
     }),
+
     ConfigModule.forRoot(),
     ClientInfoModule,
     RoomModule,
@@ -36,6 +38,7 @@ dotenv.config();
     ChatModule,
     ChatEngineModule,
     OpenAiModule,
+    MySlackModule,
   ],
   controllers: [AppController, ChatController],
   providers: [AppService, OpenAIService],
