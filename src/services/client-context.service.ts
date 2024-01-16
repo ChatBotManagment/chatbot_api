@@ -10,13 +10,14 @@ export class ClientContextService {
   constructor(private clientService: ClientInfoService) {}
 
   prefix = 'chbot_';
+  clientId: string = null;
 
   set dbName(name: string) {
     this._dbName = name;
   }
 
   get dbName(): string {
-    return this.prefix + this._dbName;
+    return this._dbName ? this.prefix + this._dbName : undefined;
   }
 
   get client(): Client {
@@ -24,6 +25,7 @@ export class ClientContextService {
   }
 
   async getClient(id: string) {
+    this.clientId = id;
     const client = await this.clientService.findOne(id);
     this.dbName = client.database;
     this._client = client;

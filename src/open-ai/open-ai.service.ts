@@ -52,7 +52,7 @@ export class OpenAIService {
 
       return stream;
     } catch (error) {
-      console.error('Error calling OpenAI:', error);
+      console.error('Error calling OpenAI:', error.stack);
       throw new Error('Error processing your request');
     }
   }

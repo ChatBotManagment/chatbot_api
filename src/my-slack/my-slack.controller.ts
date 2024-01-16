@@ -12,7 +12,7 @@ export class MySlackController {
     if (body.type === 'url_verification') {
       return { challenge: body.challenge };
     } else if (body.type === 'event_callback') {
-      await this.mySlackService.onCallback(body);
+      await this.mySlackService.prepareChatResponse(body);
     }
   }
 

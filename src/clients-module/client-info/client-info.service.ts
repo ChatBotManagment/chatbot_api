@@ -26,7 +26,7 @@ export class ClientInfoService {
   }
 
   async findOne(id: string) {
-    return await this.itemModel.findOne({ _id: id }).exec();
+    return await this.itemModel.findOne<Client>({ _id: id }).exec();
   }
 
   async update(id: number, updateClientInfoDto: UpdateClientInfoDto) {

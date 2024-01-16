@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoomTemplateController } from './room-template.controller';
-import { RoomTemplateService } from './room-template.service';
+import { RoomTemplateService } from '../services/room-template.service';
 
 describe('RoomTemplateController', () => {
   let controller: RoomTemplateController;

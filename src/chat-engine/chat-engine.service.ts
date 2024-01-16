@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RoomService } from '../db-modules/room/room.service';
+import { RoomService } from '../db-modules/services/room.service';
 
 @Injectable()
 export class ChatEngineService {

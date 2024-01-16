@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Connection, HydratedDocument, model } from 'mongoose';
 
-export type roomTemplatesDocument = HydratedDocument<ConvTemplate>;
+export type roomTemplatesDocument = HydratedDocument<RoomTemplate>;
 
 export const tableName = 'room_templates';
 
 @Schema()
-export class ConvTemplate {
+export class RoomTemplate {
   @Prop()
   name: string;
 
@@ -20,7 +20,7 @@ export class ConvTemplate {
   groupSlug: string;
 
   @Prop()
-  Prompt: string;
+  prompt: string;
 
   @Prop()
   defaultParties: number[];
@@ -35,16 +35,16 @@ export class ConvTemplate {
   createdBy: string;
 }
 
-export const roomTemplatesSchema = SchemaFactory.createForClass(ConvTemplate).set(
+export const roomTemplatesSchema = SchemaFactory.createForClass(RoomTemplate).set(
   'timestamps',
   true,
 );
 
-export const ConvTemplateModel = (connection: Connection) => {
-  return model<ConvTemplate>(
-    ConvTemplate.name,
+export const RoomTemplateModel = (connection: Connection) => {
+  return model<RoomTemplate>(
+    RoomTemplate.name,
     roomTemplatesSchema,
-    tableName || `${ConvTemplate.name.toLowerCase()}s`,
+    tableName || `${RoomTemplate.name.toLowerCase()}s`,
     {
       connection: connection,
     },

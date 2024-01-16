@@ -9,9 +9,9 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { RoomService } from './room.service';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
+import { RoomService } from '../services/room.service';
+import { CreateRoomDto } from '../room/dto/create-room.dto';
+import { UpdateRoomDto } from '../room/dto/update-room.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))

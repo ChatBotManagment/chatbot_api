@@ -9,9 +9,9 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { RoomTemplateService } from './room-template.service';
-import { CreateConvTemplateDto } from './dto/create-room-template.dto';
-import { UpdateConvTemplateDto } from './dto/update-room-template.dto';
+import { RoomTemplateService } from '../services/room-template.service';
+import { CreateConvTemplateDto } from '../room-template/dto/create-room-template.dto';
+import { UpdateConvTemplateDto } from '../room-template/dto/update-room-template.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))
@@ -31,12 +31,12 @@ export class RoomTemplateController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.roomTemplatesService.findOne(+id);
+    return this.roomTemplatesService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateConvTemplateDto: UpdateConvTemplateDto) {
-    return this.roomTemplatesService.update(+id, updateConvTemplateDto);
+    return this.roomTemplatesService.update(id, updateConvTemplateDto);
   }
 
   @Delete(':id')

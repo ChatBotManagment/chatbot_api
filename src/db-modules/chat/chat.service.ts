@@ -1,14 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateChatDto } from './dto/create-chat.dto';
-import { RoomService } from '../room/room.service';
-import { ChatEngineService } from '../../chat-engine/chat-engine.service';
+import { RoomService } from '../services/room.service';
 import { OpenAIService } from '../../open-ai/open-ai.service';
 
 @Injectable()
 export class ChatService {
   constructor(
     private roomService: RoomService,
-    private chatEngineService: ChatEngineService,
     private openAIService: OpenAIService,
   ) {}
 

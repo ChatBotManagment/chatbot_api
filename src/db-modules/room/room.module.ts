@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { RoomService } from './room.service';
-import { RoomController } from './room.controller';
+import { RoomService } from '../services/room.service';
+import { RoomController } from '../controllers/room.controller';
 import { ClientInfoModule } from '../../clients-module/client-info/client-info.module';
 
 @Module({

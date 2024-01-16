@@ -9,9 +9,9 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { PeopleService } from './people.service';
-import { CreatePersonDto } from './dto/create-person.dto';
-import { UpdatePersonDto } from './dto/update-person.dto';
+import { PeopleService } from '../services/people.service';
+import { CreatePersonDto } from '../people/dto/create-person.dto';
+import { UpdatePersonDto } from '../people/dto/update-person.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))
