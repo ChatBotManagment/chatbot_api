@@ -8,6 +8,8 @@ export const tableName = 'rooms';
 
 @Schema()
 export class Room {
+  _id: string;
+
   @Prop({ type: Object })
   configuration: any;
 

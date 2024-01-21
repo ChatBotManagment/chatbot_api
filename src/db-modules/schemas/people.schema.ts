@@ -13,6 +13,9 @@ export class People {
   @Prop()
   type: 'user' | 'bot';
 
+  @Prop({ type: [String] })
+  credentialIds: string[];
+
   @Prop()
   gender: string;
 
@@ -24,6 +27,12 @@ export class People {
 
   @Prop()
   description: string;
+
+  @Prop()
+  credit: number;
+
+  @Prop({ type: [Object] })
+  creditLog: any[];
 
   @Prop({ type: Object })
   metaData: any;

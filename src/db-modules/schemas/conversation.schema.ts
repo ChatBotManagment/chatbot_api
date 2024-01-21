@@ -11,7 +11,7 @@ export class Conversation {
   _id: Types.ObjectId;
 
   @Prop({ type: String })
-  message: any;
+  content: any;
 
   @Prop({ type: String })
   name: string;

@@ -1,5 +1,5 @@
 ### add Client
-POST http://localhost:3000/client-info
+POST http://localhost:6000/client-info
 Content-Type: application/json
 Authorization: Bearer {{bearer_token}}
 
@@ -17,6 +17,25 @@ Authorization: Bearer {{bearer_token}}
 
 
 ### get Client
-GET http://localhost:3000/client-info
+GET http://localhost:6000/client-info
 Content-Type: application/json
 Authorization: Bearer {{bearer_token}}
+
+### get Client 65a2d2f9914893d709c83780
+GET http://localhost:6000/client-info/65a2d2f9914893d709c83780
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+
+### Update Client 65a2d2f9914893d709c83780
+PATCH http://localhost:6000/client-info/65a2d2f9914893d709c83780
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+{
+  "openai_api_key": "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"
+}
+
+
+
+

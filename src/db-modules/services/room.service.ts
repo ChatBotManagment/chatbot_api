@@ -6,7 +6,7 @@ import { Connection, Model, Types } from 'mongoose';
 import { ClientContextService } from '../../services/client-context.service';
 import { Room, RoomModel } from '../schemas/room.schema';
 import { CreateChatDto } from '../chat/dto/create-chat.dto';
-import { PeopleModel } from '../schemas/people.schema';
+import { RoomTemplateService } from './room-template.service';
 
 @Injectable()
 export class RoomService {
@@ -15,6 +15,7 @@ export class RoomService {
   constructor(
     @InjectConnection('dbConnection') private connection: Connection,
     private clientContextService: ClientContextService,
+    private roomTemplateService: RoomTemplateService,
   ) {}
 
   private initConnection(dbName?: string) {
@@ -26,17 +27,29 @@ export class RoomService {
     }
   }
 
+  async createFromTemplate(
+    roomTemplateId: string,
+    createRoomDto: CreateRoomDto,
+    user: any,
+  ) {
+    const roomTemplate = await this.roomTemplateService.findOne(roomTemplateId);
+    if (!roomTemplateId) throw new Error('No room template found');
+    createRoomDto.configuration = { ...roomTemplate };
+    createRoomDto.configuration = { roomTemplateId: roomTemplateId, ...roomTemplate };
+    return await this.create(createRoomDto, user);
+  }
+
   async create(createRoomDto: CreateRoomDto, user: any) {
     this.initConnection();
     return await this.roomModel.create({ ...createRoomDto, createdBy: user.sub });
   }
 
-  async addChat(postId: string, commentDto: CreateChatDto): Promise<any> {
+  async addChat(roomId: string, commentDto: CreateChatDto): Promise<Room> {
     this.initConnection();
     const comment = { ...commentDto, _id: new Types.ObjectId() };
     try {
       return await this.roomModel
-        .findByIdAndUpdate(postId, { $push: { conversation: comment } }, { new: true })
+        .findByIdAndUpdate(roomId, { $push: { conversation: comment } }, { new: true })
         .exec();
     } catch (e) {
       console.log('error', e.message);

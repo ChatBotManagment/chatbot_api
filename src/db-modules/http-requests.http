@@ -66,6 +66,7 @@ Authorization: Bearer {{bearer_token}}
   "age": "16",
   "profilePic": "",
   "description": "",
+  "credit": 100,
   "metaData": {
     "anydata": "asd"
   }
@@ -88,6 +89,20 @@ Authorization: Bearer {{bearer_token}}
   "defaultParties": [
     1,
     2
+  ],
+  "bots": [
+    {
+      "personTemplateId": "65a3358d9c2d1683df1290ec",
+      "name": "lucy",
+      "type": "bot",
+      "gender": "female",
+      "age": "16",
+      "profilePic": "https://picsum.photos/id/497/200",
+      "description": "",
+      "metaData": {
+        "anydata": "asd"
+      }
+    }
   ],
   "memory": "string",
   "metaData": {

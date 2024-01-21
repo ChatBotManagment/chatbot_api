@@ -39,7 +39,7 @@ export class ChatService {
     if (!response.choices[0].message) return;
 
     const responseDto: CreateChatDto = {
-      message: response.choices[0].message.content,
+      content: response.choices[0].message.content,
       role: response.choices[0].message.role,
       name: 'hamo',
     };

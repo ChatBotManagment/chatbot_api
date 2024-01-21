@@ -1,55 +1,80 @@
 import { Injectable } from '@nestjs/common';
 import { WebClient } from '@slack/web-api';
-import { OpenAIService } from '../open-ai/open-ai.service';
-import { RoomTemplateService } from '../db-modules/services/room-template.service';
-import { ClientContextService } from '../services/client-context.service';
 import { RoomTemplate } from '../db-modules/schemas/roomTemplate.schema';
+import { ChatEngineService, RoomData } from '../chat-engine/chat-engine.service';
+import { Message } from '../chat-engine/entities/message';
 
 @Injectable()
 export class MySlackService {
   slackService: WebClient;
-  private systemPrompt: {
-    role: string;
-    content: string;
-  } = null;
   private roomTemplate: RoomTemplate = null;
   private conversationDescription: string = '';
-  private messages: (
-    | { role: string; content: string }
-    | { role: string; name: string; content: any }
-  )[];
+  private messages: Message[];
   private users: { [userId: string]: any } = {};
   private user: any;
 
-  constructor(
-    private clientContextService: ClientContextService,
-    private openAiService: OpenAIService,
-    private roomTemplateService: RoomTemplateService,
-  ) {
+  constructor(private chatEngineService: ChatEngineService) {
     this.slackService = new WebClient(process.env.SLACK_TOKEN);
   }
 
-  async prepareChatResponse(body: any) {
+  public async prepareChatResponse(body: any) {
     // console.log('body.event.channel', body.event.channel);
     if ('bot_id' in body.event) return;
     if ('subtype' in body.event) return;
 
     this.user = await this.getUser(body.event.user);
-    // get conversation description
-    await this.getClientAndRoomTemplate(body.event.channel);
 
-    // prepare the Messages
-    await this.prepareMessages(body.event);
+    // get conversation description
+    const roomData = await this.getRoomData(body.event.channel);
+    const bots = await this.chatEngineService.getBots(roomData);
+    console.log('bots', bots);
+    let botResponse: any;
+    if (roomData?.roomId) {
+      // if (roomData.roomId) {
+      const message: Message = {
+        role: 'user',
+        name:
+          this.user?.profile?.display_name ||
+          this.user?.real_name ||
+          this.user.name ||
+          'user',
+        content: body.event.text,
+      };
+      const meta = {
+        messageSource: 'slack',
+        messageIdFromSource: body.event.client_msg_id,
+        slackEvent: body.event,
+      };
+
+      const conversations = await this.chatEngineService.getReply(
+        message,
+        roomData,
+        meta,
+        'slack|' + this.user.id,
+      );
+      botResponse = conversations[conversations.length - 1].content;
+    } else {
+      // prepare the Messages
+      await this.prepareMessages(body.event);
+      const systemMessage: Message = {
+        role: 'system',
+        content: this.roomTemplate?.prompt || this.conversationDescription,
+      };
+      botResponse = await this.chatEngineService.getStatelessReply(
+        this.messages,
+        roomData || systemMessage,
+        'slack|' + this.user.id,
+      );
+    }
 
     // get bot response
-    const botResponse = await this.openAiService.chatCompletions({
-      messages: this.messages,
-    });
 
     // send back the response to the Slack channel
     await this.slackService.chat.postMessage({
       channel: body.event.channel,
-      text: botResponse.choices[0].message.content,
+      text: botResponse,
+      icon_url: bots[0].profilePic,
+      username: bots[0].name,
     });
   }
 
@@ -68,7 +93,7 @@ export class MySlackService {
     return this.users[userId];
   }
 
-  async getClientAndRoomTemplate(channel: string) {
+  async getRoomData(channel: string): Promise<RoomData> {
     const conversationDescriptionResponse = await this.slackService.conversations.info({
       channel: channel,
     });
@@ -79,13 +104,14 @@ export class MySlackService {
 
     if (match) {
       const convSetting = JSON.parse(`{${match[1]}}`);
-      if (!(convSetting['clientId'] && convSetting['roomTemplate'])) return;
+      // if (!(convSetting['clientId'] && convSetting['roomTemplate'])) return;
 
-      const roomTemplateId = convSetting['roomTemplate'];
+      const roomData: RoomData = {};
+      roomData.clientId = convSetting['clientId'];
+      roomData.roomTemplateId = convSetting['roomTemplate'];
+      roomData.roomId = convSetting['roomId'];
 
-      await this.clientContextService.getClient(convSetting['clientId']);
-
-      this.roomTemplate = await this.roomTemplateService.findOne(roomTemplateId);
+      return roomData;
     }
   }
 
@@ -94,17 +120,17 @@ export class MySlackService {
       channel: event.channel,
     });
 
-    const systemMessage = {
-      role: 'system',
-      content: this.roomTemplate?.prompt || this.conversationDescription,
-    };
     let messages: any[] = [];
     for (const item of history.messages) {
       if (item.type === 'message' && !('subtype' in item)) {
         const user = await this.getUser(item.user || item.bot_id, item.bot_profile);
         messages.push({
           role: 'bot_id' in item ? 'assistant' : 'user',
-          name: user.name.toString().replace(/[^a-zA-Z0-9_-]/g, ''),
+          name:
+            user?.profile?.display_name?.toString().replace(/[^a-zA-Z0-9_-]/g, '-') ||
+            user?.real_name?.toString().replace(/[^a-zA-Z0-9_-]/g, '-') ||
+            user?.name?.toString().replace(/[^a-zA-Z0-9_-]/g, '-') ||
+            'user',
           content: item.text,
         });
       }
@@ -112,17 +138,8 @@ export class MySlackService {
 
     messages = messages.reverse();
 
-    console.log('messages', messages);
+    // console.log('messages', messages);
 
-    this.messages = [
-      systemMessage,
-      ...messages,
-      {
-        role: 'user',
-        name: this.user.name.toString().replace(/[^a-zA-Z0-9_-]/g, ''),
-        content: event.text,
-      },
-    ];
-    console.log('messages', this.messages);
+    this.messages = [...messages];
   }
 }

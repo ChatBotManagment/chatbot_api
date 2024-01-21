@@ -36,10 +36,29 @@ export class PeopleService {
     return await this.peopleModel.find().exec();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     this.initConnection();
 
     return await this.peopleModel.findOne({ _id: id }).exec();
+  }
+
+  async findOneByCredential(credentialId: string) {
+    this.initConnection();
+
+    return await this.peopleModel.findOne({ credentialIds: credentialId }).exec();
+  }
+
+  async increaseCredit(credentialId: string, additionalCredit: number) {
+    this.initConnection();
+    const person = await this.peopleModel.findOne({ credentialIds: credentialId }).exec();
+    if (person.credit + additionalCredit < 0) throw new Error('Not enough credit');
+    const afterUpdated = await this.peopleModel
+      .findByIdAndUpdate(
+        { _id: person._id },
+        { credit: person.credit + additionalCredit },
+      )
+      .exec();
+    return afterUpdated.credit;
   }
 
   async update(id: string, updatePersonDto: UpdatePersonDto) {

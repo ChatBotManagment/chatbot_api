@@ -29,7 +29,7 @@ export class ClientContextService {
     const client = await this.clientService.findOne(id);
     this.dbName = client.database;
     this._client = client;
-    console.log('dbName', this.dbName);
+    console.debug('dbName__', this.dbName);
 
     return client;
   }

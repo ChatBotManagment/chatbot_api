@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MySlackController } from './my-slack.controller';
 import { MySlackService } from './my-slack.service';
-import { OpenAiModule } from '../open-ai/open-ai.module';
-import { RoomTemplateModule } from '../db-modules/room-template/room-template.module';
+import { ChatEngineModule } from '../chat-engine/chat-engine.module';
 import { ClientInfoModule } from '../clients-module/client-info/client-info.module';
+import { MySlackCommandsService } from './my-slack-commands.service';
+import { RoomModule } from '../db-modules/room/room.module';
 
 @Module({
-  imports: [OpenAiModule, RoomTemplateModule, ClientInfoModule],
+  imports: [ChatEngineModule, ClientInfoModule, RoomModule],
   controllers: [MySlackController],
-  providers: [MySlackService],
+  providers: [MySlackService, MySlackCommandsService],
 })
 export class MySlackModule {}

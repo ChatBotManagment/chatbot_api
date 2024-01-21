@@ -1,5 +1,5 @@
 export class CreateChatDto {
-  message: any;
+  content: any;
   name?: string;
   role?: string;
   metaData?: any;

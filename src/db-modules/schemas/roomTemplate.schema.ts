@@ -25,6 +25,9 @@ export class RoomTemplate {
   @Prop()
   defaultParties: number[];
 
+  @Prop({ type: [Object] })
+  bots: any[];
+
   @Prop()
   memory: string;
 

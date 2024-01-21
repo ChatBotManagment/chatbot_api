@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { OpenAI } from 'openai';
 import * as dotenv from 'dotenv';
 import { ChatCompletionCreateParamsBase } from 'openai/src/resources/chat/completions';
+import { ClientInfoService } from '../clients-module/client-info/client-info.service';
+import { ClientContextService } from '../services/client-context.service';
 
 dotenv.config();
 
@@ -31,16 +33,31 @@ export type Roles = OpenAI.Chat.Completions.ChatCompletionRole;
 export class OpenAIService {
   private openai: OpenAI;
 
-  constructor() {
+  constructor(
+    private clientInfoService: ClientInfoService,
+    private clientContextService: ClientContextService,
+  ) {
+    // this.openai = new OpenAI({
+    //   apiKey: process.env.OPENAI_API_KEY, // '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',
+    //   organization: process.env.OPENAI_ORGANIZATION, //'org-jRGWrSsagksEJhRFtybrnDXE',
+    // });
+    //// this.openai = new OpenAIApi(configuration);
+  }
+
+  async configOpenai() {
+    const client = await this.clientInfoService.findOne(
+      this.clientContextService.clientId,
+    );
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY, // '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',
-      organization: process.env.OPENAI_ORGANIZATION, //'org-jRGWrSsagksEJhRFtybrnDXE',
+      apiKey: client?.openai_api_key || process.env.OPENAI_API_KEY, // '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',
+      organization: client?.openai_organization || process.env.OPENAI_ORGANIZATION, //'org-jRGWrSsagksEJhRFtybrnDXE',
     });
-    // this.openai = new OpenAIApi(configuration);
   }
 
   async chatCompletions(options: ChatCompletionOptions | any = {}) {
+    await this.configOpenai();
     try {
+      console.log('messages', options.messages);
       const stream = await this.openai.chat.completions.create({
         // messages: [{ role: role as any, content: message }],
         model: 'gpt-3.5-turbo-1106',
@@ -58,6 +75,8 @@ export class OpenAIService {
   }
 
   async getCompletions(message: string, options: any = {}) {
+    await this.configOpenai();
+
     const response = await this.openai.completions.create({
       model: 'gpt-3.5-turbo-instruct',
       prompt: message,
