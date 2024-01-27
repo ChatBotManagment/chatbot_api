@@ -1,17 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { CreateConvTemplateDto } from '../room-template/dto/create-room-template.dto';
 import { UpdateConvTemplateDto } from '../room-template/dto/update-room-template.dto';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { RoomTemplate, RoomTemplateModel } from '../schemas/roomTemplate.schema';
 import { ClientContextService } from '../../services/client-context.service';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class RoomTemplateService {
   private roomTemplateModel: Model<RoomTemplate>;
+  connection: Connection;
 
   constructor(
-    @InjectConnection('dbConnection') private connection: Connection,
+    // @InjectConnection('dbConnection') private connection: Connection,
     private clientContextService: ClientContextService,
   ) {
     // this.initConnection();
@@ -19,7 +19,7 @@ export class RoomTemplateService {
 
   private initConnection(dbName?: string) {
     if (dbName || this.clientContextService.dbName) {
-      this.connection = this.connection.useDb(dbName || this.clientContextService.dbName);
+      this.connection = this.clientContextService.dbConnection;
       this.roomTemplateModel = RoomTemplateModel(this.connection);
     } else {
       throw new Error('No database name provided');
@@ -47,11 +47,15 @@ export class RoomTemplateService {
 
   async update(id: string, updateConvTemplateDto: UpdateConvTemplateDto) {
     this.initConnection();
-    return `This action updates a #${id} room ${updateConvTemplateDto}`;
+    return await this.roomTemplateModel
+      .findByIdAndUpdate({ _id: id }, updateConvTemplateDto)
+      .exec();
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     this.initConnection();
-    return await (this.roomTemplateModel as any).findByIdAndRemove({ _id: id }).exec();
+    return await(this.roomTemplateModel as any)
+      .deleteOne({ _id: id })
+      .exec();
   }
 }

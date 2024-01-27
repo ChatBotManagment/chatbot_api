@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OpenAI } from 'openai';
 import * as dotenv from 'dotenv';
 import { ChatCompletionCreateParamsBase } from 'openai/src/resources/chat/completions';
-import { ClientInfoService } from '../clients-module/client-info/client-info.service';
+import { ClientInfoService } from '../clients-module/client-info/services/client-info.service';
 import { ClientContextService } from '../services/client-context.service';
 
 dotenv.config();

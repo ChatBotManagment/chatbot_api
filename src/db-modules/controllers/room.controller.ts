@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { RoomService } from '../services/room.service';
 import { CreateRoomDto } from '../room/dto/create-room.dto';
@@ -21,12 +23,20 @@ export class RoomController {
 
   @Post()
   create(@Body() createRoomDto: CreateRoomDto, @Req() req: Request) {
-    return this.roomService.create(createRoomDto, (req as any).user);
+    try {
+      return this.roomService.create(createRoomDto, (req as any).user);
+    } catch (e) {
+      throw new Error(e.message);
+    }
   }
 
   @Get()
   findAll() {
-    return this.roomService.findAll();
+    try {
+      return this.roomService.findAll();
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.BAD_GATEWAY);
+    }
   }
 
   @Get(':id')
@@ -36,11 +46,11 @@ export class RoomController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomService.update(+id, updateRoomDto);
+    return this.roomService.update(id, updateRoomDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.roomService.remove(+id);
+    return this.roomService.remove(id);
   }
 }

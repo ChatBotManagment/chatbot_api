@@ -1,32 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePersonDto } from '../people/dto/create-person.dto';
+import { Injectable, Scope } from '@nestjs/common';
 import { UpdatePersonDto } from '../people/dto/update-person.dto';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { People, PeopleModel } from '../schemas/people.schema';
 import { ClientContextService } from '../../services/client-context.service';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class PeopleService {
   private peopleModel: Model<People>;
 
+  connection: Connection;
   constructor(
-    @InjectConnection('dbConnection') private connection: Connection,
+    // @InjectConnection('dbConnection') private connection: Connection,
     private clientContextService: ClientContextService,
   ) {}
 
   private initConnection(dbName?: string) {
     if (dbName || this.clientContextService.dbName) {
-      this.connection = this.connection.useDb(dbName || this.clientContextService.dbName);
+      this.connection = this.clientContextService.dbConnection;
       this.peopleModel = PeopleModel(this.connection);
     } else {
       throw new Error('No database name provided');
     }
   }
 
-  async create(createPersonDto: CreatePersonDto, user: any) {
+  async create(createPersonDto: any, user: any) {
     this.initConnection();
 
+    console.log('asda--------', createPersonDto);
+
+    console.log('asd', { ...createPersonDto, createdBy: user.sub });
     return await this.peopleModel.create({ ...createPersonDto, createdBy: user.sub });
   }
 
@@ -67,11 +69,9 @@ export class PeopleService {
     return await this.peopleModel.findByIdAndUpdate({ _id: id }, updatePersonDto).exec();
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     this.initConnection();
 
-    return await(this.peopleModel as any)
-      .findByIdAndRemove({ _id: id })
-      .exec();
+    return await this.peopleModel.deleteOne({ _id: id }).exec();
   }
 }

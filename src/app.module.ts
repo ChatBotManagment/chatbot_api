@@ -16,6 +16,7 @@ import { ChatEngineModule } from './chat-engine/chat-engine.module';
 import { OpenAiModule } from './open-ai/open-ai.module';
 import { OpenAIService } from './open-ai/open-ai.service';
 import { MySlackModule } from './my-slack/my-slack.module';
+import { UseWalletMiddleware } from './middlewares/use-wallet.middleware';
 
 dotenv.config();
 
@@ -26,9 +27,9 @@ dotenv.config();
       dbName: 'chatbot_clients',
       connectionName: 'clientsConnection',
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI, {
-      connectionName: 'dbConnection',
-    }),
+    /*    MongooseModule.forRoot(process.env.MONGO_URI, {
+          connectionName: 'dbConnection',
+        }),*/
 
     ConfigModule.forRoot(),
     ClientInfoModule,
@@ -46,5 +47,6 @@ dotenv.config();
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(ClientDbMiddleware).forRoutes('api/*');
+    consumer.apply(UseWalletMiddleware).forRoutes('api/*');
   }
 }

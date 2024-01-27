@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ClientInfoService } from './client-info.service';
-import { CreateClientInfoDto } from './dto/create-client-info.dto';
-import { UpdateClientInfoDto } from './dto/update-client-info.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { ClientInfoService } from '../services/client-info.service';
+import { CreateClientInfoDto } from '../dto/create-client-info.dto';
+import { UpdateClientInfoDto } from '../dto/update-client-info.dto';
 
 @Controller('client-info')
 export class ClientInfoController {
@@ -27,8 +27,13 @@ export class ClientInfoController {
     return this.clientInfoService.update(id, updateClientInfoDto);
   }
 
+  @Put(':id/add-wallet-amount')
+  updateWallet(@Param('id') id: string, @Body() updateClientInfoDto: any) {
+    return this.clientInfoService.updateBalance(id, updateClientInfoDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.clientInfoService.remove(+id);
+    return this.clientInfoService.remove(id);
   }
 }

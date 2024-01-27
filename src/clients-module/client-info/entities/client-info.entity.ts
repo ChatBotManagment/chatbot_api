@@ -27,11 +27,18 @@ export class Client {
 
   @Prop({ type: Object })
   metadata: any;
+
+  @Prop()
+  wallet: number;
+
+  @Prop({ type: [Object] })
+  walletLog: any[];
 }
 
 export const ClientSchema = SchemaFactory.createForClass(Client).set('timestamps', true);
 export const ItemModel = (connection: Connection) => {
   return model<Client>(Client.name, ClientSchema, tableName || `${Client.name}s`, {
+    overwriteModels: true,
     connection: connection,
   });
 };

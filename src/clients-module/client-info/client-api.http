@@ -36,6 +36,93 @@ Authorization: Bearer {{bearer_token}}
   "openai_api_key": "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"
 }
 
+### Increase wallet amount Client 65a2d2f9914893d709c83780
+PUT http://localhost:3500/client-info/65a2d2f9914893d709c83780/add-wallet-amount
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+{
+  "amount": 100,
+  "description": "increase wallet amount",
+  "metadata": {
+    "source": "Hazem",
+    "price": "free",
+    "payment_method": "none"
+  }
+}
+
+### Use wallet amount Client 65a2d2f9914893d709c83780
+PUT http://localhost:3500/client-info/65a2d2f9914893d709c83780/add-wallet-amount
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+{
+  "amount": -50,
+  "description": "Use Chat service",
+  "metadata": {
+    "source": "Hazem"
+  }
+}
+
+
+
+
+
+##########################
+
+
+### add ClientUser
+POST http://localhost:3500/client-user
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+{
+  "name": "anas_11_",
+  "type": "user",
+  "credentialIds": [
+    "google-oauth2|1142253375788413546421"
+  ],
+  "gender": "male",
+  "age": "16",
+  "profilePic": "",
+  "description": "",
+  "metaData": {
+    "anydata": "asd"
+  }
+}
+
+
+### get ClientUser
+GET http://localhost:3500/client-user
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+### get ClientUser 65b442c322a52cd59bd3aa3c
+GET http://localhost:3500/client-user/65b442c322a52cd59bd3aa3c
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+
+### Update ClientUser 65b442c322a52cd59bd3aa3c
+PATCH http://localhost:3500/client-user/65b442c322a52cd59bd3aa3c
+Content-Type: application/json
+Authorization: Bearer {{bearer_token}}
+
+{
+  "credentialIds": [
+    "google-oauth2|1142253375788413546421"
+  ]
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

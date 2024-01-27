@@ -21,7 +21,7 @@ export class PeopleController {
 
   @Post()
   create(@Body() createPersonDto: CreatePersonDto, @Req() req: Request) {
-    console.log('req.user', (req as any).user);
+    debugger;
     return this.peopleService.create(createPersonDto, (req as any).user);
   }
 
@@ -42,6 +42,6 @@ export class PeopleController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.peopleService.remove(+id);
+    return this.peopleService.remove(id);
   }
 }

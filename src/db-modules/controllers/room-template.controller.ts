@@ -41,6 +41,6 @@ export class RoomTemplateController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.roomTemplatesService.remove(+id);
+    return this.roomTemplatesService.remove(id);
   }
 }

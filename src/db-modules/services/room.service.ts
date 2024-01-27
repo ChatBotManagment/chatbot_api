@@ -1,27 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 import { CreateRoomDto } from '../room/dto/create-room.dto';
 import { UpdateRoomDto } from '../room/dto/update-room.dto';
-import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
 import { ClientContextService } from '../../services/client-context.service';
 import { Room, RoomModel } from '../schemas/room.schema';
 import { CreateChatDto } from '../chat/dto/create-chat.dto';
 import { RoomTemplateService } from './room-template.service';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class RoomService {
-  private roomModel: Model<Room>;
+  private roomModel: Model<any>;
+  connection: Connection;
 
   constructor(
-    @InjectConnection('dbConnection') private connection: Connection,
+    // @InjectConnection('dbConnection') private connection: Connection,
     private clientContextService: ClientContextService,
     private roomTemplateService: RoomTemplateService,
   ) {}
 
   private initConnection(dbName?: string) {
     if (dbName || this.clientContextService.dbName) {
-      this.connection = this.connection.useDb(dbName || this.clientContextService.dbName);
-      this.roomModel = RoomModel(this.connection);
+      this.roomModel = RoomModel(this.clientContextService.dbConnection);
     } else {
       throw new Error('No database name provided');
     }
@@ -67,13 +66,13 @@ export class RoomService {
     return await this.roomModel.findOne({ _id: id }).exec();
   }
 
-  update(id: number, updateRoomDto: UpdateRoomDto) {
+  update(id: string, updateRoomDto: UpdateRoomDto) {
     this.initConnection();
-    return `This action updates a #${id} room ${updateRoomDto}`;
+    return this.roomModel.updateOne({ _id: id }, updateRoomDto);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     this.initConnection();
-    return await (this.roomModel as any).findByIdAndRemove({ _id: id }).exec();
+    return await this.roomModel.deleteOne({ _id: id }).exec();
   }
 }

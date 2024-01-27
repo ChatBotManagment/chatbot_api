@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ClientInfoService } from './client-info.service';
-import { ClientInfoController } from './client-info.controller';
+import { ClientInfoService } from './services/client-info.service';
+import { ClientInfoController } from './controllers/client-info.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Client, ClientSchema } from './entities/client-info.entity';
 import { ClientContextService } from '../../services/client-context.service';
+import { ClientUsersController } from './controllers/client-users.controller';
+import { ClientUsersService } from './services/client-users.service';
 
 @Module({
   imports: [
@@ -12,8 +14,8 @@ import { ClientContextService } from '../../services/client-context.service';
       'clientsConnection',
     ),
   ],
-  controllers: [ClientInfoController],
-  providers: [ClientInfoService, ClientContextService],
-  exports: [ClientInfoService, ClientContextService],
+  controllers: [ClientInfoController, ClientUsersController],
+  providers: [ClientInfoService, ClientContextService, ClientUsersService],
+  exports: [ClientInfoService, ClientContextService, ClientUsersService],
 })
 export class ClientInfoModule {}

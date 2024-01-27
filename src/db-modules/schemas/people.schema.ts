@@ -1,12 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Connection, HydratedDocument, model } from 'mongoose';
+import { Connection, HydratedDocument, Model, model } from 'mongoose';
+import { Base, BaseModel } from './base.schema';
+import { RoomTemplate } from './roomTemplate.schema';
 
 export type PeopleDocument = HydratedDocument<People>;
 
 export const tableName = 'people';
 
 @Schema()
-export class People {
+export class People extends Base {
   @Prop()
   name: string;
 
@@ -43,12 +45,14 @@ export class People {
 
 export const PeopleSchema = SchemaFactory.createForClass(People).set('timestamps', true);
 
+
 export const PeopleModel = (connection: Connection) => {
   return model<People>(
     People.name,
     PeopleSchema,
     tableName || `${People.name.toLowerCase()}s`,
     {
+      overwriteModels: true,
       connection: connection,
     },
   );

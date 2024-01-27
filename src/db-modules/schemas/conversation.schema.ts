@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { Base } from './base.schema';
 
 export type ConversationDocument = HydratedDocument<Conversation>;
 
 export const tableName = 'rooms';
 
 @Schema()
-export class Conversation {
+export class Conversation extends Base {
   @Prop({ type: Types.ObjectId, auto: true })
   _id: Types.ObjectId;
 
