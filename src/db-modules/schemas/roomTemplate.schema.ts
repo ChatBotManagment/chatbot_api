@@ -40,18 +40,17 @@ export class RoomTemplate extends Base {
   createdBy: string;
 }
 
-export const roomTemplatesSchema = BaseSchema.clone();
-/*  SchemaFactory.createForClass(RoomTemplate).set(
+// export const roomTemplatesSchema = BaseSchema.clone();
+export const roomTemplatesSchema = SchemaFactory.createForClass(RoomTemplate).set(
   'timestamps',
   true,
-);*/
+);
 
-export const RoomTemplateModel: (connection: Connection) => Model<RoomTemplate> = (
-  connection: Connection,
-) => BaseModel(connection, tableName) as any;
+// export const RoomTemplateModel: (connection: Connection) => Model<RoomTemplate> = (
+//   connection: Connection,
+// ) => BaseModel(connection, tableName) as any;
 
-
-/*export const RoomTemplateModel = (connection: Connection) => {
+export const RoomTemplateModel = (connection: Connection) => {
   return model<RoomTemplate>(
     RoomTemplate.name,
     roomTemplatesSchema,
@@ -61,4 +60,4 @@ export const RoomTemplateModel: (connection: Connection) => Model<RoomTemplate> 
       connection: connection,
     },
   );
-};*/
+};

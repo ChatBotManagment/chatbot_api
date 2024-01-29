@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { RoomTemplateService } from '../services/room-template.service';
 import { CreateConvTemplateDto } from '../room-template/dto/create-room-template.dto';
@@ -22,6 +24,17 @@ export class RoomTemplateController {
   @Post()
   create(@Body() createConvTemplateDto: CreateConvTemplateDto, @Req() req: Request) {
     return this.roomTemplatesService.create(createConvTemplateDto, (req as any).user);
+  }
+
+  @Post()
+  createFromPerson(@Body() createConvTemplateDto: any, @Req() req: Request) {
+    if (!createConvTemplateDto.personTemplateId)
+      throw new HttpException('personTemplateId is Required', HttpStatus.BAD_REQUEST);
+
+    return this.roomTemplatesService.createFromPerson(
+      createConvTemplateDto,
+      (req as any).user,
+    );
   }
 
   @Get()

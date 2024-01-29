@@ -1,9 +1,10 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Scope } from '@nestjs/common';
 import { CreateConvTemplateDto } from '../room-template/dto/create-room-template.dto';
 import { UpdateConvTemplateDto } from '../room-template/dto/update-room-template.dto';
 import { Connection, Model } from 'mongoose';
 import { RoomTemplate, RoomTemplateModel } from '../schemas/roomTemplate.schema';
 import { ClientContextService } from '../../services/client-context.service';
+import { PeopleService } from './people.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RoomTemplateService {
@@ -13,6 +14,7 @@ export class RoomTemplateService {
   constructor(
     // @InjectConnection('dbConnection') private connection: Connection,
     private clientContextService: ClientContextService,
+    private peopleService: PeopleService,
   ) {
     // this.initConnection();
   }
@@ -26,12 +28,36 @@ export class RoomTemplateService {
     }
   }
 
-  async create(createConvTemplateDto: CreateConvTemplateDto, user: any) {
+  async create(body: CreateConvTemplateDto | any, user: any) {
     this.initConnection();
-    return await this.roomTemplateModel.create({
-      ...createConvTemplateDto,
-      createdBy: user.sub,
-    });
+    if (!body.personTemplateId) {
+      return await this.roomTemplateModel.create({
+        ...body,
+        createdBy: user.sub,
+      });
+    } else {
+      const person = await this.peopleService.findOne(body.personTemplateId);
+      if (person)
+        return await this.roomTemplateModel.create({
+          ...body,
+          prompt: person.description + ' \n ' + body.prompt,
+          bots: [person],
+          createdBy: user.sub,
+        });
+      else throw new HttpException('no person with this Id', HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async createFromPerson(body: any, user) {
+    this.initConnection();
+    const person: any = await this.peopleService.findOne(body.personTemplateId);
+    if (person)
+      return await this.roomTemplateModel.create({
+        ...body,
+        prompt: person.description + ' \n ' + body.prompt,
+        bots: body.bots?.length ? body.bots.push(person.bots) : [person.bots],
+        createdBy: user.sub,
+      });
   }
 
   async findAll() {
@@ -42,7 +68,7 @@ export class RoomTemplateService {
   async findOne(id: string, dbName?: string) {
     this.initConnection(dbName);
 
-    return await this.roomTemplateModel.findOne<RoomTemplate>({ _id: id }).exec();
+    return await this.roomTemplateModel.findById<RoomTemplate>(id).exec();
   }
 
   async update(id: string, updateConvTemplateDto: UpdateConvTemplateDto) {
