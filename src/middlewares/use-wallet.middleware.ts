@@ -13,6 +13,7 @@ export class UseWalletMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: () => void) {
+    console.log('UseWalletMiddleware');
     const clientId = req.headers['client-id'];
     // Create a new connection to the client's database
     // req['dbConnection'] = this.clientContextService.dbConnection;
