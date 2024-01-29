@@ -43,7 +43,7 @@ dotenv.config();
     MySlackModule,
   ],
   controllers: [AppController, ChatController],
-  providers: [AppService, OpenAIService],
+  providers: [AppService, OpenAIService /* , LogInterceptor*/],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

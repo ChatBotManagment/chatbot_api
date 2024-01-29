@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Headers, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post, Query } from '@nestjs/common';
 import { MySlackService } from './my-slack.service';
 import { ClientContextService } from '../services/client-context.service';
 import { MySlackCommandsService } from './my-slack-commands.service';
-
+import axios from 'axios';
 
 export interface CommandResponse {
   token: string;
@@ -79,4 +79,17 @@ export class MySlackController {
       await this.mySlackCommandService.createChannelAndRoomFromTemplate(body);
     }
   }
+
+
+  @Get('authCallback')
+  async authCallback(    @Param('clientId') clientId: string, @Query('code') code: string, @Param('state') state: string) {
+    console.log('authCallback', clientId, state, code);
+    return await this.mySlackService.authCallback(clientId, code, state);
+  }
+
+  @Post('auth-test')
+  authCallback1(@Body() body: any) {
+    console.log('authCallback1', body)
+  }
+
 }

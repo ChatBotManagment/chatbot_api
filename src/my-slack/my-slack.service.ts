@@ -3,6 +3,10 @@ import { WebClient } from '@slack/web-api';
 import { RoomTemplate } from '../db-modules/schemas/roomTemplate.schema';
 import { ChatEngineService, RoomData } from '../chat-engine/chat-engine.service';
 import { Message } from '../chat-engine/entities/message';
+import axios from 'axios';
+import * as FormData from 'form-data';
+import { ClientInfoService } from '../clients-module/client-info/services/client-info.service';
+import { ClientContextService } from '../services/client-context.service';
 
 @Injectable()
 export class MySlackService {
@@ -13,19 +17,28 @@ export class MySlackService {
   private users: { [userId: string]: any } = {};
   private user: any;
 
-  constructor(private chatEngineService: ChatEngineService) {
-    this.slackService = new WebClient(process.env.SLACK_TOKEN);
+  constructor(
+    private chatEngineService: ChatEngineService,
+    private clientContextService: ClientContextService,
+    private clientInfoService: ClientInfoService,
+  ) {
+    // this.slackService = new WebClient(process.env.SLACK_TOKEN);
+    // this.prepareSlackService().then();
   }
+
+
 
   public async prepareChatResponse(body: any) {
     // console.log('body.event.channel', body.event.channel);
     if ('bot_id' in body.event) return;
     if ('subtype' in body.event) return;
-
+    const slackAuthToken = this.clientContextService.client.metadata.slackAuth.access_token
+    this.slackService = new WebClient(slackAuthToken);
     this.user = await this.getUser(body.event.user);
 
     // get conversation description
     const roomData = await this.getRoomData(body.event.channel);
+
     const bots = await this.chatEngineService.getBots(roomData);
     console.log('bots', bots);
     let botResponse: any;
@@ -141,5 +154,27 @@ export class MySlackService {
     // console.log('messages', messages);
 
     this.messages = [...messages];
+  }
+
+  async authCallback(clientId: any, code: string, state: string) {
+    console.log('authCallback - env', {
+      client_id: process.env.SLACK_CLIENT_ID,
+      client_secret: process.env.SLACK_CLIENT_SECRET,
+      code: code,
+    });
+    if (clientId) {
+      const form = new FormData();
+      form.append('code', code);
+      form.append('client_id', process.env.SLACK_CLIENT_ID);
+      form.append('client_secret', process.env.SLACK_CLIENT_SECRET);
+      const response = await axios.post('https://slack.com/api/oauth.v2.access', form);
+      console.log('response', response.data);
+
+      const res_addOrUpdateMeta = await this.clientInfoService.addOrUpdateMeta(clientId, {
+        slackAuth: response.data,
+      });
+      console.log('res_addOrUpdateMeta', res_addOrUpdateMeta);
+      return response.data;
+    }
   }
 }

@@ -67,4 +67,16 @@ export class ClientInfoService {
     await client.save();
     return client.wallet;
   }
+
+  async addOrUpdateMeta(clientId: string, param: { [key: string]: any }) {
+    const client = await this.itemModel.findById({ _id: clientId }).exec();
+    let metadata: any = {};
+    if (client) {
+      metadata = client.metadata || {};
+      metadata = { ...metadata, ...param };
+      client.metadata = metadata;
+    }
+    await client.save();
+    return client.metadata;
+  }
 }

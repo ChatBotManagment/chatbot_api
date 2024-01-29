@@ -1,0 +1,20 @@
+# curl -F code=1234 -F client_id=3336676.569200954261 -F client_secret=ABCDEFGH https://slack.com/api/oauth.v2.access
+POST https://slack.com/api/oauth.v2.access
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="code"
+
+4607282834932.6545107475829.05b1847d6ff8c8ffded6270e2db429e6f4cafeda44307fb0e734a74a7993784e
+--WebAppBoundary
+Content-Disposition: form-data; name="client_id"
+
+4607282834932.6482593463922
+--WebAppBoundary
+Content-Disposition: form-data; name="client_secret"
+
+b995ea2f385f59a13310edae4790b76c
+--WebAppBoundary--
+
+###
+

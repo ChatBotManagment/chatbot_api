@@ -130,12 +130,12 @@ export class ChatEngineService {
   }
 
   async getBots(roomData: RoomData): Promise<any[]> {
-    if (roomData.roomId) {
+    if (roomData?.roomId) {
       const room = await this.roomService.findOne(roomData.roomId);
       if (room.configuration.bots) return room.configuration.bots;
     }
 
-    if (roomData.roomTemplateId) {
+    if (roomData?.roomTemplateId) {
       const roomTemplate = await this.roomTemplateService.findOne(
         roomData.roomTemplateId,
       );
