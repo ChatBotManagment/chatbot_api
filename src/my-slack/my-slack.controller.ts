@@ -38,7 +38,7 @@ export class MySlackController {
     if (clientId) await this.clientContextService.getClient(clientId);
     else throw new Error('clientId is required');
     if (retryNum) return;
-    console.error('userMessage',clientId, body);
+    console.log('userMessage',clientId, body);
     if (body.type === 'url_verification') {
       return { challenge: body.challenge };
     } else if (body.type === 'event_callback') {

@@ -17,10 +17,22 @@ export class AppController {
     return this.appService.getHello(body);
   }
 
-  @Get('chatbot-api1-out-log')
+  @Get('log1')
   serveLogFile(@Res() res: Response): void {
     // Define the path to your log file
     const logFilePath = '/home/ubuntu/.pm2/logs/chatbot-api1-out.log';
+
+    // Serve the log file
+    try {
+      res.sendFile(path.resolve(logFilePath));
+    } catch (e) {
+      console.log('Error serving log file: ', e);
+    }
+  }
+  @Get('log2')
+  serveLogFile2(@Res() res: Response): void {
+    // Define the path to your log file
+    const logFilePath = ' /home/ubuntu/.pm2/logs/chatbot-api1-error.log';
 
     // Serve the log file
     try {
