@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AppService } from './app.service';
+import * as path from 'path';
 
 @Controller()
 export class AppController {
@@ -13,5 +15,18 @@ export class AppController {
   @Post()
   getHello(@Param() body: any): string {
     return this.appService.getHello(body);
+  }
+
+  @Get('chatbot-api1-out-log')
+  serveLogFile(@Res() res: Response): void {
+    // Define the path to your log file
+    const logFilePath = '/home/ubuntu/.pm2/logs/chatbot-api1-out.log';
+
+    // Serve the log file
+    try {
+      res.sendFile(path.resolve(logFilePath));
+    } catch (e) {
+      console.log('Error serving log file: ', e);
+    }
   }
 }
