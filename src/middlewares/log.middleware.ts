@@ -8,8 +8,8 @@ export class LogMiddleware implements NestMiddleware {
   constructor() {}
 
   async use(req: Request, res: Response, next: () => void) {
-    console.log('req.body', req.body);
-    console.log('res', res);
+    console.log('LogMiddleware_req.body', req.body);
+    console.log('LogMiddleware_res', res.body);
     next();
   }
 }
