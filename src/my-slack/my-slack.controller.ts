@@ -36,7 +36,7 @@ export class MySlackController {
     @Headers('X-Slack-Retry-Num') retryNum: number,
   ) {
     console.log('userMessage',clientId, body);
-    
+
     if (clientId) await this.clientContextService.getClient(clientId);
     else throw new Error('clientId is required');
     if (retryNum) return;
