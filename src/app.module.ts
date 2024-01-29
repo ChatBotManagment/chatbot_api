@@ -17,6 +17,7 @@ import { OpenAiModule } from './open-ai/open-ai.module';
 import { OpenAIService } from './open-ai/open-ai.service';
 import { MySlackModule } from './my-slack/my-slack.module';
 import { UseWalletMiddleware } from './middlewares/use-wallet.middleware';
+import { LogMiddleware } from './middlewares/log.middleware';
 
 dotenv.config();
 
@@ -48,5 +49,6 @@ export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(ClientDbMiddleware).forRoutes('api/*');
     consumer.apply(UseWalletMiddleware).forRoutes('api/*');
+    consumer.apply(LogMiddleware).forRoutes('*');
   }
 }
