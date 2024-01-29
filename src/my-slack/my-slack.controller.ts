@@ -38,7 +38,7 @@ export class MySlackController {
     if (clientId) await this.clientContextService.getClient(clientId);
     else throw new Error('clientId is required');
     if (retryNum) return;
-    console.log('userMessage', body);
+    console.log('userMessage',clientId, body);
     if (body.type === 'url_verification') {
       return { challenge: body.challenge };
     } else if (body.type === 'event_callback') {
@@ -46,7 +46,7 @@ export class MySlackController {
         console.log('prepareChatResponse___');
         await this.mySlackService.prepareChatResponse(body);
       } catch (e) {
-        console.log('error___', e.message);
+        console.log('error___', e);
         await this.mySlackService.slackService.chat.postEphemeral({
           user: body.event.user,
           channel: body.event.channel,
