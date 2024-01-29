@@ -32,7 +32,7 @@ export class AppController {
   @Get('log2')
   serveLogFile2(@Res() res: Response): void {
     // Define the path to your log file
-    const logFilePath = ' /home/ubuntu/.pm2/logs/chatbot-api1-error.log';
+    const logFilePath = '/home/ubuntu/.pm2/logs/chatbot-api1-error.log';
 
     // Serve the log file
     try {
