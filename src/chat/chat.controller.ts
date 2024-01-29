@@ -9,6 +9,7 @@ export class ChatController {
   // @UseGuards(AuthGuard('jwt'))
   @Post()
   async sendMessage(@Body('message') userMessage: string) {
+    console.log('userMessage', userMessage);
     const response = await this.openAIService.chatCompletions(userMessage);
     return response;
   }
