@@ -13,6 +13,7 @@ export class ClientDbMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: Request, res: Response, next: () => void) {
+    console.log('ClientDbMiddleware', req.headers['client-id']);
     const clientId = req.headers['client-id'];
     await this.clientContextService.getClient(clientId);
 
