@@ -35,10 +35,11 @@ export class MySlackController {
     @Body() body: any,
     @Headers('X-Slack-Retry-Num') retryNum: number,
   ) {
+    console.log('userMessage',clientId, body);
+    
     if (clientId) await this.clientContextService.getClient(clientId);
     else throw new Error('clientId is required');
     if (retryNum) return;
-    console.log('userMessage',clientId, body);
     if (body.type === 'url_verification') {
       return { challenge: body.challenge };
     } else if (body.type === 'event_callback') {
