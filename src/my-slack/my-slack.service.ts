@@ -75,7 +75,7 @@ export class MySlackService {
           'zoeil',
         );
       } catch (error) {
-        throw new Error(error);
+        throw error;
       }
       botResponse = conversations[conversations.length - 1].content;
     } else {
