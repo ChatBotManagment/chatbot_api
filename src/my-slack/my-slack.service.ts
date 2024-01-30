@@ -9,6 +9,7 @@ import { ClientInfoService } from '../clients-module/client-info/services/client
 import { ClientContextService } from '../services/client-context.service';
 import { PeopleService } from '../db-modules/services/people.service';
 import { CommandResponse } from './my-slack.controller';
+import { Conversation } from '../db-modules/schemas/conversation.schema';
 
 @Injectable()
 export class MySlackService {
@@ -64,14 +65,18 @@ export class MySlackService {
         messageIdFromSource: body.event.client_msg_id,
         slackEvent: body.event,
       };
-
-      const conversations = await this.chatEngineService.getReply(
-        message,
-        roomData,
-        meta,
-        'slack|' + this.user.id,
-        'zoeil',
-      );
+      let conversations: Conversation[];
+      try {
+        conversations = await this.chatEngineService.getReply(
+          message,
+          roomData,
+          meta,
+          'slack|' + this.user.id,
+          'zoeil',
+        );
+      } catch (error) {
+        throw new Error(error);
+      }
       botResponse = conversations[conversations.length - 1].content;
     } else {
       // prepare the Messages
