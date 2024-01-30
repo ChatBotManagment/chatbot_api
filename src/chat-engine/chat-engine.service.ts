@@ -71,6 +71,7 @@ export class ChatEngineService {
     roomData: RoomData,
     meta: any,
     credentialId: any,
+    botName?: string,
   ): Promise<Conversation[]> {
     const person = await this.getPerson(credentialId);
 
@@ -86,14 +87,17 @@ export class ChatEngineService {
       content: message.content,
       metaData: meta,
     });
+    console.log('room', '==================================');
 
+    console.log('room', room);
+    if (!room.conversation) room.conversation = [];
     const history = room.conversation.map((message) => ({
       content: message.content,
       role: message.role,
       name: message.name,
     }));
     const roomTemplateConf = room.configuration;
-    const systemMessage = { content: roomTemplateConf.prompt, role: 'system' };
+    const systemMessage = { content: roomTemplateConf?.prompt || '', role: 'system' };
     //send to openAI
     let botResponse: ChatCompletion;
     try {
@@ -132,7 +136,7 @@ export class ChatEngineService {
   async getBots(roomData: RoomData): Promise<any[]> {
     if (roomData?.roomId) {
       const room = await this.roomService.findOne(roomData.roomId);
-      if (room.configuration.bots) return room.configuration.bots;
+      if (room.configuration?.bots) return room.configuration.bots;
     }
 
     if (roomData?.roomTemplateId) {

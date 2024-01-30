@@ -9,7 +9,7 @@ import { RoomTemplateService } from './room-template.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RoomService {
-  private roomModel: Model<any>;
+  private roomModel: Model<Room>;
   connection: Connection;
 
   constructor(
@@ -32,9 +32,12 @@ export class RoomService {
     user: any,
   ) {
     const roomTemplate = await this.roomTemplateService.findOne(roomTemplateId);
-    if (!roomTemplateId) throw new Error('No room template found');
-    createRoomDto.configuration = { ...roomTemplate };
-    createRoomDto.configuration = { roomTemplateId: roomTemplateId, ...roomTemplate };
+    if (!roomTemplate) throw new Error('No room template found');
+    const sd = JSON.stringify(roomTemplate);
+    const sd1 = JSON.parse(sd);
+
+    createRoomDto.configuration = { ...sd1 };
+    createRoomDto.configuration = { roomTemplateId: roomTemplateId, ...sd1 };
     return await this.create(createRoomDto, user);
   }
 

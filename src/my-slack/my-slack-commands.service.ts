@@ -4,6 +4,7 @@ import { ChatEngineService } from '../chat-engine/chat-engine.service';
 import { CommandResponse } from './my-slack.controller';
 import { RoomService } from '../db-modules/services/room.service';
 import { Room } from '../db-modules/schemas/room.schema';
+import { ClientContextService } from '../services/client-context.service';
 
 @Injectable()
 export class MySlackCommandsService {
@@ -11,15 +12,21 @@ export class MySlackCommandsService {
 
   constructor(
     private chatEngineService: ChatEngineService,
+    private clientContextService: ClientContextService,
     private roomService: RoomService,
-  ) {
-    this.slackService = new WebClient(process.env.SLACK_TOKEN);
-  }
+  ) {}
 
   async createChannelAndRoomFromTemplate(body: CommandResponse) {
+    const slackAuthToken =
+      this.clientContextService.client.metadata.slackAuth.access_token;
+    this.slackService = new WebClient(slackAuthToken);
+
     const channelName = body.text.trim().split(' ')[0] || 'test-6';
     const roomTemplateId = body.text.trim().split(' ')[1] || undefined;
-    if (!channelName) return;
+    if (!channelName || !roomTemplateId) {
+      this.throwSlackError('channelName & roomTemplateId are required', body);
+      return;
+    }
 
     const creatingRes = await this.slackService.conversations.create({
       is_private: false,
@@ -57,7 +64,7 @@ export class MySlackCommandsService {
 
     const setPurposeRes = await this.slackService.conversations.setPurpose({
       channel: creatingRes?.channel.id,
-      purpose: `${room.configuration.description}
+      purpose: `${room.configuration?.description}
       RoomData:
       {{{ "roomId": "${room._id.toString()}" }}}
       `,
@@ -72,4 +79,16 @@ export class MySlackCommandsService {
     console.log('setPurposeRes', setPurposeRes);
     console.log('setTopicRes', setTopicRes);
   }
+
+  private throwSlackError(error: string, body: CommandResponse) {
+    console.log('error___', error);
+    this.slackService.chat.postEphemeral({
+      user: body.user_id,
+      channel: body.channel_id,
+      text: '__ ERROR: ' + error,
+      icon_emoji: ':robot_face:',
+    });
+  }
+
+  async showRoomTemplates(body: CommandResponse) {}
 }

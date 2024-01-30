@@ -35,28 +35,41 @@ export class MySlackController {
     @Body() body: any,
     @Headers('X-Slack-Retry-Num') retryNum: number,
   ) {
-    console.log('userMessage',clientId, body);
+    console.log('userMessage', clientId, body);
 
+    // ********* url_verification *********
     if (clientId) await this.clientContextService.getClient(clientId);
     else throw new Error('clientId is required');
     if (retryNum) return;
     if (body.type === 'url_verification') {
       return { challenge: body.challenge };
-    } else if (body.type === 'event_callback') {
-      try {
-        console.log('prepareChatResponse___');
-        await this.mySlackService.prepareChatResponse(body);
-      } catch (e) {
-        console.log('error___', e);
-        await this.mySlackService.slackService.chat.postEphemeral({
-          user: body.event.user,
-          channel: body.event.channel,
-          text: '__ ERROR: ' + e.message,
-          icon_emoji: ':robot_face:',
-        });
+    }
+    // ********* event_callback *********
+    else if (body.type === 'event_callback') {
+      // ------ bot_message ------
+      if (!('subtype' in body.event)) {
+        try {
+          console.log('prepareChatResponse___');
+          await this.mySlackService.prepareChatResponse(body);
+        } catch (e) {
+          console.log('error___', e);
+          await this.mySlackService.throwSlackError(e, body.event);
+        }
+      }
+      // ------ Person Join ------
+      else if (body.event.subtype === 'channel_join') {
+        console.log('channel_join', body.event.channel);
+        try {
+          console.log('prepareChatResponse___');
+          await this.mySlackService.personJoinChannel(body);
+        } catch (e) {
+          await this.mySlackService.throwSlackError(e, body);
+        }
       }
     }
   }
+
+
 
   @Post('interactive')
   interactive(@Body() body: any) {
@@ -76,20 +89,28 @@ export class MySlackController {
 
     if (commandName === 'c_from_template') {
       console.log('commandName', commandName);
+
       await this.mySlackCommandService.createChannelAndRoomFromTemplate(body);
     }
   }
 
-
   @Get('authCallback')
-  async authCallback(    @Param('clientId') clientId: string, @Query('code') code: string, @Param('state') state: string) {
+  async authCallback(
+    @Param('clientId') clientId: string,
+    @Query('code') code: string,
+    @Param('state') state: string,
+  ) {
     console.log('authCallback', clientId, state, code);
-    return await this.mySlackService.authCallback(clientId, code, state);
+    try {
+      return await this.mySlackService.authCallback(clientId, code, state);
+    } catch (e) {
+      console.log('error___', e);
+      return e;
+    }
   }
 
   @Post('auth-test')
   authCallback1(@Body() body: any) {
-    console.log('authCallback1', body)
+    console.log('authCallback1', body);
   }
-
 }

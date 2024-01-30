@@ -7,6 +7,8 @@ import axios from 'axios';
 import * as FormData from 'form-data';
 import { ClientInfoService } from '../clients-module/client-info/services/client-info.service';
 import { ClientContextService } from '../services/client-context.service';
+import { PeopleService } from '../db-modules/services/people.service';
+import { CommandResponse } from './my-slack.controller';
 
 @Injectable()
 export class MySlackService {
@@ -21,25 +23,29 @@ export class MySlackService {
     private chatEngineService: ChatEngineService,
     private clientContextService: ClientContextService,
     private clientInfoService: ClientInfoService,
+    private peopleService: PeopleService,
   ) {
     // this.slackService = new WebClient(process.env.SLACK_TOKEN);
     // this.prepareSlackService().then();
   }
 
-
-
   public async prepareChatResponse(body: any) {
     // console.log('body.event.channel', body.event.channel);
     if ('bot_id' in body.event) return;
     if ('subtype' in body.event) return;
-    const slackAuthToken = this.clientContextService.client.metadata.slackAuth.access_token
-    this.slackService = new WebClient(slackAuthToken);
+    this.initSlackService();
     this.user = await this.getUser(body.event.user);
 
     // get conversation description
     const roomData = await this.getRoomData(body.event.channel);
 
     const bots = await this.chatEngineService.getBots(roomData);
+    roomData.bot = {
+      name: bots[0].userName,
+      slackBotId: bots[0]._id,
+      personId: bots[0]._id,
+    };
+
     console.log('bots', bots);
     let botResponse: any;
     if (roomData?.roomId) {
@@ -64,6 +70,7 @@ export class MySlackService {
         roomData,
         meta,
         'slack|' + this.user.id,
+        'zoeil',
       );
       botResponse = conversations[conversations.length - 1].content;
     } else {
@@ -87,11 +94,11 @@ export class MySlackService {
       channel: body.event.channel,
       text: botResponse,
       icon_url: bots[0].profilePic,
-      username: bots[0].name,
+      username: bots[0].userName,
     });
   }
 
-  async getUser(userId: string, botProfile?: any) {
+  private async getUser(userId: string, botProfile?: any) {
     let userResponse: any;
     if (!this.users[userId]) {
       if (botProfile) {
@@ -123,6 +130,9 @@ export class MySlackService {
       roomData.clientId = convSetting['clientId'];
       roomData.roomTemplateId = convSetting['roomTemplate'];
       roomData.roomId = convSetting['roomId'];
+      /*    roomData.bot = {
+            name: 'ahmed_zoiel',
+          };*/
 
       return roomData;
     }
@@ -176,5 +186,71 @@ export class MySlackService {
       console.log('res_addOrUpdateMeta', res_addOrUpdateMeta);
       return response.data;
     }
+  }
+
+  public async personJoinChannel(body: any) {
+    this.initSlackService();
+
+    // Check if User exists
+    const slackUser = await this.getUser(body.event.user);
+
+    if (!slackUser.is_bot) {
+      const appUser = await this.peopleService.findOneByCredential(
+        'slack|' + slackUser.id,
+      );
+      console.log('appUser', appUser);
+      if (!appUser) {
+        await this.peopleService.create(
+          {
+            name: slackUser.profile.display_name,
+            credentialIds: ['slack|' + slackUser.id],
+            type: 'user',
+            gender: 'male',
+            profilePic: slackUser.profile.image_192,
+            description: slackUser.profile.real_name,
+            credit: 50,
+            createdBy: 'slack|' + slackUser.id,
+            metadata: {
+              profiles: [slackUser],
+            },
+          },
+          { sub: 'slack|' + slackUser.id },
+        );
+      }
+    }
+
+    /*    const channelInfo = await this.slackService.conversations.info({
+          channel: body.event.channel,
+        });
+        console.log('channelInfo', channelInfo);
+        if (channelInfo?.channel?.is_channel) {
+          const channelName = channelInfo.channel.name;
+          const room =
+            await this.clientContextService.roomService.findOneByTitle(channelName);
+          if (room) {
+            await this.clientContextService.roomService.addChat(room._id, {
+              content: `Welcome to ${channelName}`,
+              role: 'bot',
+              name: 'bot',
+            });
+          }
+        }*/
+  }
+
+  async throwSlackError(error: string, body: CommandResponse) {
+    this.initSlackService();
+    console.log('error___', error);
+    await this.slackService.chat.postEphemeral({
+      user: body.user_id,
+      channel: body.channel_id,
+      text: '__ ERROR: ' + error,
+      icon_emoji: ':robot_face:',
+    });
+  }
+
+  initSlackService() {
+    const slackAuthToken =
+      this.clientContextService.client.metadata.slackAuth.access_token;
+    this.slackService = new WebClient(slackAuthToken);
   }
 }
