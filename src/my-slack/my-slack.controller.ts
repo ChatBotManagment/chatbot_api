@@ -48,13 +48,11 @@ export class MySlackController {
     else if (body.type === 'event_callback') {
       // ------ bot_message ------
       if (!('subtype' in body.event)) {
-        try {
-          console.log('prepareChatResponse___');
-          await this.mySlackService.prepareChatResponse(body);
-        } catch (e) {
+        console.log('prepareChatResponse___');
+        await this.mySlackService.prepareChatResponse(body).catch(async (e) => {
           console.log('error___', e);
           await this.mySlackService.throwSlackError(e, body.event);
-        }
+        });
       }
       // ------ Person Join ------
       else if (body.event.subtype === 'channel_join') {
@@ -68,8 +66,6 @@ export class MySlackController {
       }
     }
   }
-
-
 
   @Post('interactive')
   interactive(@Body() body: any) {
